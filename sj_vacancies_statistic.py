@@ -8,13 +8,13 @@ def fetch_sj_vacancies_by_lang(sj_key, language, town=4,
                                period=30, catalogue=48):
     fetched_vacancies = []
 
-    for page in itertools.count():
+    for page_num in itertools.count():
         headers = {
             "X-Api-App-Id": sj_key
         }
 
         params = {
-            "page": page,
+            "page": page_num,
             "count": 100,
             "town": town,
             "period": period,
@@ -40,7 +40,7 @@ def fetch_sj_vacancies_by_lang(sj_key, language, town=4,
 
 
 def predict_rub_salary_sj(vacancy):
-    if not vacancy["currency"] == "rub":
+    if vacancy["currency"] != "rub":
         return None
 
     salary_from = vacancy["payment_from"]
@@ -61,9 +61,9 @@ def get_languages_salary_statistic_sj(sj_key, languages):
         ]
 
         cleaned_predicted_salaries = [
-            int(salary)
+            salary
             for salary in predicted_salaries
-            if salary is not None
+            if salary
         ]
 
         vacancies_processed_count = len(cleaned_predicted_salaries)

@@ -6,7 +6,7 @@ from sj_vacancies_statistic import get_languages_salary_statistic_sj
 
 
 def get_vacancies_statistic_table(statistic, table_title):
-    table_data = [
+    table_rows = [
         [
             "Язык программирования",
             "Вакансий найдено",
@@ -16,7 +16,7 @@ def get_vacancies_statistic_table(statistic, table_title):
     ]
 
     for lang_name, lang_stat in statistic.items():
-        table_data.append(
+        table_rows.append(
             [
                 lang_name,
                 lang_stat["vacancies_found"],
@@ -25,7 +25,7 @@ def get_vacancies_statistic_table(statistic, table_title):
             ]
         )
 
-    table = AsciiTable(table_data, title=table_title)
+    table = AsciiTable(table_rows, title=table_title)
 
     return table.table
 

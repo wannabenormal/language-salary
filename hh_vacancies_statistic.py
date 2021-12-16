@@ -7,37 +7,34 @@ from salary_calculations import predict_salary
 def fetch_hh_vacancies_by_lang(language, search_area=1, period=30):
     vacancies = []
 
-    for page in itertools.count():
+    for page_num in itertools.count():
         params = {
             "text": f"Программист {language}",
             "area": search_area,
             "period": period,
-            "page": page,
+            "page": page_num,
         }
 
         response = requests.get("https://api.hh.ru/vacancies/", params=params)
         response.raise_for_status()
 
-        page_data = response.json()
-        vacancies.extend(page_data["items"])
+        vacancies_page = response.json()
+        vacancies.extend(vacancies_page["items"])
 
-        if page == page_data["pages"] - 1:
+        if page_num == vacancies_page["pages"] - 1:
             break
 
     return vacancies
 
 
 def predict_rub_salary_hh(vacancy):
-    salary_info = vacancy["salary"]
+    salary = vacancy["salary"]
 
-    if not salary_info:
+    if not salary or salary["currency"] != "RUR":
         return None
 
-    if not salary_info["currency"] == "RUR":
-        return None
-
-    salary_from = salary_info["from"]
-    salary_to = salary_info["to"]
+    salary_from = salary["from"]
+    salary_to = salary["to"]
 
     return predict_salary(salary_from, salary_to)
 
@@ -52,9 +49,9 @@ def get_languages_salary_statistic_hh(languages):
             for vacancy in vacancies
         ]
         cleaned_predicted_salaries = [
-            int(salary)
+            salary
             for salary in predicted_salaries
-            if salary is not None
+            if salary
         ]
 
         vacancies_processed_count = len(cleaned_predicted_salaries)
