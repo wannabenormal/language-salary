@@ -1,15 +1,13 @@
-import requests
+import itertools
 from statistics import mean
+import requests
 from salary_calculations import predict_salary
 
 
 def fetch_hh_vacancies_by_lang(language, search_area=1, period=30):
-    page = 0
-    pages_count = 1
-
     vacancies = []
 
-    while page < pages_count:
+    for page in itertools.count():
         params = {
             "text": f"Программист {language}",
             "area": search_area,
@@ -21,11 +19,10 @@ def fetch_hh_vacancies_by_lang(language, search_area=1, period=30):
         response.raise_for_status()
 
         page_data = response.json()
-
-        pages_count = page_data["pages"]
-        page += 1
-
         vacancies.extend(page_data["items"])
+
+        if page == page_data["pages"] - 1:
+            break
 
     return vacancies
 

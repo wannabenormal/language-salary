@@ -1,5 +1,6 @@
-import requests
+import itertools
 from statistics import mean
+import requests
 from salary_calculations import predict_salary
 
 
@@ -7,10 +8,7 @@ def fetch_sj_vacancies_by_lang(sj_key, language, town=4,
                                period=30, catalogue=48):
     fetched_vacancies = []
 
-    page = 0
-    more_pages = True
-
-    while more_pages:
+    for page in itertools.count():
         headers = {
             "X-Api-App-Id": sj_key
         }
@@ -33,11 +31,10 @@ def fetch_sj_vacancies_by_lang(sj_key, language, town=4,
         response.raise_for_status()
 
         vacancies_page = response.json()
-
         fetched_vacancies.extend(vacancies_page["objects"])
 
-        page += 1
-        more_pages = vacancies_page["more"]
+        if not vacancies_page["more"]:
+            break
 
     return fetched_vacancies
 
@@ -57,10 +54,12 @@ def get_languages_salary_statistic_sj(sj_key, languages):
 
     for lang in languages:
         vacancies = fetch_sj_vacancies_by_lang(sj_key, lang)
+
         predicted_salaries = [
             predict_rub_salary_sj(vacancy)
             for vacancy in vacancies
         ]
+
         cleaned_predicted_salaries = [
             int(salary)
             for salary in predicted_salaries
