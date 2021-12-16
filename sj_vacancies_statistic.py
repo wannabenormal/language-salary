@@ -9,6 +9,7 @@ def fetch_sj_vacancies_by_lang(
         period=30, catalogue=48):
 
     fetched_vacancies = []
+    vacancies_total = 0
 
     for page_num in itertools.count():
         headers = {
@@ -34,11 +35,12 @@ def fetch_sj_vacancies_by_lang(
 
         vacancies_page = response.json()
         fetched_vacancies.extend(vacancies_page["objects"])
+        vacancies_total = vacancies_page["total"]
 
         if not vacancies_page["more"]:
             break
 
-    return fetched_vacancies
+    return fetched_vacancies, vacancies_total
 
 
 def predict_rub_salary_sj(vacancy):
@@ -55,7 +57,7 @@ def get_languages_salary_statistic_sj(sj_key, languages):
     languages_salary_statistic = {}
 
     for lang in languages:
-        vacancies = fetch_sj_vacancies_by_lang(sj_key, lang)
+        vacancies, vacancies_total = fetch_sj_vacancies_by_lang(sj_key, lang)
 
         predicted_salaries = [
             predict_rub_salary_sj(vacancy)
@@ -75,7 +77,7 @@ def get_languages_salary_statistic_sj(sj_key, languages):
         )
 
         languages_salary_statistic[lang] = {
-            "vacancies_found": len(vacancies),
+            "vacancies_found": vacancies_total,
             "vacancies_processed": vacancies_processed_count,
             "average_salary": average_salary
         }

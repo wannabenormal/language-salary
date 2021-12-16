@@ -5,7 +5,8 @@ from salary_calculations import predict_salary
 
 
 def fetch_hh_vacancies_by_lang(language, search_area=1, period=30):
-    vacancies = []
+    fetched_vacancies = []
+    vacancies_total = 0
 
     for page_num in itertools.count():
         params = {
@@ -19,12 +20,13 @@ def fetch_hh_vacancies_by_lang(language, search_area=1, period=30):
         response.raise_for_status()
 
         vacancies_page = response.json()
-        vacancies.extend(vacancies_page["items"])
+        fetched_vacancies.extend(vacancies_page["items"])
+        vacancies_total = vacancies_page["found"]
 
         if page_num == vacancies_page["pages"] - 1:
             break
 
-    return vacancies
+    return fetched_vacancies, vacancies_total
 
 
 def predict_rub_salary_hh(vacancy):
@@ -43,7 +45,7 @@ def get_languages_salary_statistic_hh(languages):
     languages_salary_statistic = {}
 
     for lang in languages:
-        vacancies = fetch_hh_vacancies_by_lang(lang)
+        vacancies, vacancies_total = fetch_hh_vacancies_by_lang(lang)
         predicted_salaries = [
             predict_rub_salary_hh(vacancy)
             for vacancy in vacancies
@@ -61,7 +63,7 @@ def get_languages_salary_statistic_hh(languages):
         )
 
         languages_salary_statistic[lang] = {
-            "vacancies_found": len(vacancies),
+            "vacancies_found": vacancies_total,
             "vacancies_processed": vacancies_processed_count,
             "average_salary": average_salary
         }
