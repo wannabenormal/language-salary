@@ -1,6 +1,6 @@
 import requests
 from statistics import mean
-from utils import predict_salary
+from salary_calculations import predict_salary
 
 
 def fetch_sj_vacancies_by_lang(sj_key, language, town=4,
@@ -79,4 +79,3 @@ def get_languages_salary_statistic_sj(sj_key, languages):
         }
 
     return languages_salary_statistic
-

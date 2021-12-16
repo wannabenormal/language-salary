@@ -1,6 +1,6 @@
 import requests
 from statistics import mean
-from utils import predict_salary
+from salary_calculations import predict_salary
 
 
 def fetch_hh_vacancies_by_lang(language, search_area=1, period=30):
