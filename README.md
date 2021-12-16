@@ -1,6 +1,6 @@
 # Programming vacancies compare
 
-This script will show vacancies count and average salary from HH and SuperJob for popular programming languages in Moscow.
+This script will show vacancies count and average salary from [HH](https://hh.ru) and [SuperJob](https://superjob.ru) for popular programming languages in Moscow.
 
 ### How to install
 
