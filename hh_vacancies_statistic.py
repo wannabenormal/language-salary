@@ -55,9 +55,10 @@ def get_languages_salary_statistic_hh(languages):
         ]
 
         vacancies_processed_count = len(cleaned_predicted_salaries)
-        average_salary = (int(mean(cleaned_predicted_salaries))
-                          if vacancies_processed_count
-                          else None)
+        average_salary = (
+            int(mean(cleaned_predicted_salaries))
+            if vacancies_processed_count else None
+        )
 
         languages_salary_statistic[lang] = {
             "vacancies_found": len(vacancies),

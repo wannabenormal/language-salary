@@ -4,8 +4,10 @@ import requests
 from salary_calculations import predict_salary
 
 
-def fetch_sj_vacancies_by_lang(sj_key, language, town=4,
-                               period=30, catalogue=48):
+def fetch_sj_vacancies_by_lang(
+        sj_key, language, town=4,
+        period=30, catalogue=48):
+
     fetched_vacancies = []
 
     for page_num in itertools.count():
@@ -67,9 +69,10 @@ def get_languages_salary_statistic_sj(sj_key, languages):
         ]
 
         vacancies_processed_count = len(cleaned_predicted_salaries)
-        average_salary = (int(mean(cleaned_predicted_salaries))
-                          if vacancies_processed_count
-                          else None)
+        average_salary = (
+            int(mean(cleaned_predicted_salaries))
+            if vacancies_processed_count else None
+        )
 
         languages_salary_statistic[lang] = {
             "vacancies_found": len(vacancies),
