@@ -6,25 +6,25 @@ from salary_calculations import predict_salary
 
 def fetch_hh_vacancies_by_lang(language, search_area=1, period=30):
     fetched_vacancies = []
-    vacancies_total = 0
+
+    params = {
+        "text": f"Программист {language}",
+        "area": search_area,
+        "period": period,
+    }
 
     for page_num in itertools.count():
-        params = {
-            "text": f"Программист {language}",
-            "area": search_area,
-            "period": period,
-            "page": page_num,
-        }
-
+        params["page"] = page_num
         response = requests.get("https://api.hh.ru/vacancies/", params=params)
         response.raise_for_status()
 
         vacancies_page = response.json()
         fetched_vacancies.extend(vacancies_page["items"])
-        vacancies_total = vacancies_page["found"]
 
         if page_num == vacancies_page["pages"] - 1:
             break
+
+    vacancies_total = vacancies_page["found"]
 
     return fetched_vacancies, vacancies_total
 

@@ -9,23 +9,21 @@ def fetch_sj_vacancies_by_lang(
         period=30, catalogue=48):
 
     fetched_vacancies = []
-    vacancies_total = 0
+
+    headers = {
+        "X-Api-App-Id": sj_key
+    }
+    params = {
+        "count": 100,
+        "town": town,
+        "period": period,
+        "catalogues": catalogue,
+        "keywords[0][srws]": 1,
+        "keywords[0][keys]": language,
+    }
 
     for page_num in itertools.count():
-        headers = {
-            "X-Api-App-Id": sj_key
-        }
-
-        params = {
-            "page": page_num,
-            "count": 100,
-            "town": town,
-            "period": period,
-            "catalogues": catalogue,
-            "keywords[0][srws]": 1,
-            "keywords[0][keys]": language,
-        }
-
+        params["page"] = page_num
         response = requests.get(
             "https://api.superjob.ru/2.0/vacancies/",
             headers=headers,
@@ -35,10 +33,11 @@ def fetch_sj_vacancies_by_lang(
 
         vacancies_page = response.json()
         fetched_vacancies.extend(vacancies_page["objects"])
-        vacancies_total = vacancies_page["total"]
 
         if not vacancies_page["more"]:
             break
+
+    vacancies_total = vacancies_page["total"]
 
     return fetched_vacancies, vacancies_total
 
